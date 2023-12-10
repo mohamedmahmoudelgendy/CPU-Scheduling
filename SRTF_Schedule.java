@@ -30,8 +30,57 @@ public class SRTF_Schedule {
     }
      
     public void run(){
-        int workingProcessIndex = -1 ;
+        int workingProcessIndex = -1 , shortestBurstTime = processes.get(0).getBurstTime() ;
+        
+        for(int i = 0 ; i < processes.size() ;i++){
+            if(shortestBurstTime > processes.get(i).getBurstTime()){
+                shortestBurstTime = processes.get(i).getBurstTime();
+            }
+        }
+        
+        mainWhile:
         while (completed != processes.size()) { 
+            
+            if(Time % shortestBurstTime == 0 && Time != 0){
+                for(int i = 0 ; i < shortestBurstTime && completed != processes.size();i++){
+                    int longest = -1 ; 
+                    for (int j = 0 ; j <processes.size();j++) { 
+                        if (!isCompleted.get(j) && processes.get(j).getArrivalTime() <= Time) { 
+                            if (longest == -1 || processes.get(j).getRemainingTime() > processes.get(longest).getRemainingTime()) { 
+                                longest = j ; 
+                            } 
+                        } 
+                    } 
+
+                    if (longest == -1) { 
+                        Time++; 
+                        continue; 
+                    } 
+
+                    if(workingProcessIndex != longest){
+                        workingProcessIndex = longest ;
+                        System.out.println("Time: "+Time+ " Process: "+processes.get(workingProcessIndex).getName()+" is Working");
+                    }
+
+                    processes.get(longest).decreaseRemainingTime();
+                    if (processes.get(longest).getRemainingTime() == 0) { 
+                        processes.get(longest).setCompletionTime( Time + 1); 
+                        processes.get(longest).setTurnaroundTime( processes.get(longest).getCompletionTime() - processes.get(longest).getArrivalTime()); 
+                        processes.get(longest).setWaitingTime( processes.get(longest).getTurnaroundTime() - processes.get(longest).getBurstTime()); 
+                        isCompleted.set(longest, true); 
+                        completed++; 
+                    } 
+                    Time++ ;
+
+                }
+                
+                if(completed == processes.size()){
+                    System.out.println("Time: "+Time+" Finished");
+                    break mainWhile ;
+                }
+                
+            }
+            
             int shortest= -1 ; 
             for (int i=0; i<processes.size();i++) { 
                 if (!isCompleted.get(i) && processes.get(i).getArrivalTime() <= Time) { 
