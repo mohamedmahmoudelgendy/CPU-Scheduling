@@ -10,20 +10,18 @@ package cpu.scheduling;
  */
 public class Process {
     private String name ;
-    private String color ;
     private int arrivalTime ;
     private int burstTime ;
     private int priorityNumber;
     private int remainingTime ;
     private int completionTime ;
-    private int turnaroundTime ;
+    private int turnAroundTime ;
     private int waitingTime ;
 
     public Process() {}
     
-    public Process(String name, String color, int arrivalTime, int burstTime, int priorityNumber) {
+    public Process(String name,int arrivalTime, int burstTime, int priorityNumber) {
         this.name = name;
-        this.color = color;
         this.arrivalTime = arrivalTime;
         this.burstTime = burstTime;
         this.priorityNumber =  priorityNumber;
@@ -36,14 +34,6 @@ public class Process {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getColor() {
-        return color;
-    }
-
-    public void setColor(String color) {
-        this.color = color;
     }
     
     public int getArrivalTime() {
@@ -86,12 +76,12 @@ public class Process {
         this.completionTime = completionTime;
     }
 
-    public int getTurnaroundTime() {
-        return turnaroundTime;
+    public int getTurnAroundTime() {
+        return turnAroundTime;
     }
 
-    public void setTurnaroundTime(int turnaroundTime) {
-        this.turnaroundTime = turnaroundTime;
+    public void setTurnAroundTime(int turnAroundTime) {
+        this.turnAroundTime = turnAroundTime;
     }
 
     public int getWaitingTime() {
@@ -104,6 +94,10 @@ public class Process {
     
     public void  decreaseRemainingTime(){
         this.remainingTime-- ;
+    }
+    
+    public void increasePriority() {
+        this.priorityNumber++ ;
     }
     
 }

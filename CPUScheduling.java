@@ -4,44 +4,91 @@
  */
 package cpu.scheduling;
 
+import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.Vector;
 
 /**
  *
  * @author Medo
  */
 public class CPUScheduling {
+    private static Vector<Process> processes1 = new Vector<Process>() ;
+    private static Vector<Process> processes2 = new Vector<Process>() ;
+    private static Vector<Process> processes3 = new Vector<Process>() ;
+
+    private static ArrayList<AGprocess> AGprocesses = new ArrayList<AGprocess>() ;
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        SRTF_Schedule srtfSchedule = new SRTF_Schedule();
-        
+
+       
         Scanner input = new Scanner(System.in); 
-        System.out.print("Enter the number of processes: "); 
+        System.out.print("Enter the Number of Processes: "); 
         int n = input.nextInt(); 
+        System.out.print("Enter the Quantum Time: "); 
+        int quantum = input.nextInt(); 
+        System.out.print("Enter the Context Switching: "); 
+        int context = input.nextInt(); 
         input.nextLine();
         
         for (int i = 0; i < n; i++) { 
-            int arrivalTime,burstTime,priority;
-            String name ,color ;
             System.out.println("Enter details for process " + (i + 1)); 
             System.out.print("Process Name: "); 
-            name = input.nextLine(); 
-            System.out.print("Process Color: "); 
-            color = input.nextLine(); 
+            String name = input.nextLine(); 
             System.out.print("Arrival time: "); 
-            arrivalTime = input.nextInt(); 
+            int arrivalTime = input.nextInt(); 
             System.out.print("Burst time: "); 
-            burstTime = input.nextInt(); 
+            int burstTime = input.nextInt(); 
             System.out.print("Process Priority Number: "); 
-            priority = input.nextInt(); 
+            int priority = input.nextInt(); 
             input.nextLine();
-            srtfSchedule.addProcess(name, color, arrivalTime,burstTime);
+            Process process1 = new Process(name,arrivalTime,burstTime,priority);
+            Process process2 = new Process(name,arrivalTime,burstTime,priority);
+            Process process3 = new Process(name,arrivalTime,burstTime,priority);
+            processes1.add(process1);
+            processes2.add(process2);
+            processes3.add(process3);
+            AGprocess agprocess = new AGprocess(name,arrivalTime,burstTime,priority,quantum);
+            AGprocesses.add(agprocess);
         }
-        srtfSchedule.run();
-    }         
-    
-}
-    
+        
+        
+//        AGprocess p1 = new AGprocess("p1",0,17,4,4) , p2 = new AGprocess("p2",3,6,9,4), p3 = new AGprocess("p3",4,10,3,4),p4 = new AGprocess("p4",29,4,8,4);
+//        
+//        AGprocesses.add(p1);
+//        AGprocesses.add(p2);
+//        AGprocesses.add(p3);
+//        AGprocesses.add(p4);
 
+        System.out.print("1.SJF\n2.SRTF\n3.Priority\n4.AG\n5.all\nEnter your choice: ");
+        int answer = input.nextInt() ;
+        
+        if(answer == 1 || answer == 5){
+            System.out.println("\n              SJF Schedule");
+            SJF_Schedule sjfSchedule = new SJF_Schedule(processes1);
+            sjfSchedule.setContextSwiching(context);
+            sjfSchedule.run();
+        }
+        
+        if(answer == 2 || answer == 5){
+            System.out.println("\n              SRTF Schedule");
+            SRTF_Schedule srtfSchedule = new SRTF_Schedule(processes2);
+            srtfSchedule.run();
+        }
+        
+        if(answer == 3 || answer == 5){
+            System.out.println("\n              priority Schedule");
+            Priority_Schedule prioritySchedule = new Priority_Schedule(processes3) ;
+            prioritySchedule.run();
+        }
+        
+        if(answer == 4 || answer == 5){
+            System.out.println("\n              AG Schedule");
+            AG_Schedule agschedule = new AG_Schedule(AGprocesses) ;
+            agschedule.run();
+        }
+
+    }
+}

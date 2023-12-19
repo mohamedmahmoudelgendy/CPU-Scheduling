@@ -11,92 +11,43 @@ import java.util.Vector;
  *
  * @author Medo
  */
-public class SRTF_Schedule {
+public class SJF_Schedule {
     private Vector<Process> processes ;
     private Vector<Boolean> isCompleted ; 
     private int Time; 
     private int completed ;
+    private int contextSwiching;
     private double totalTurnaroundTime ; 
     private double totalWaitingTime ; 
- 
-    public SRTF_Schedule(){
+    
+    public SJF_Schedule(){
         this.processes = new Vector<Process>();
         this.isCompleted = new Vector<Boolean>();
         this.Time = 0 ;
         this.completed = 0 ;
+        this.contextSwiching = 0;
         this.totalTurnaroundTime = 0; 
         this.totalWaitingTime = 0;
     }
 
-    public SRTF_Schedule(Vector<Process> processes) {
+    public SJF_Schedule(Vector<Process> processes) {
         this.processes = processes;
         this.isCompleted = new Vector<Boolean>(Collections.nCopies(processes.size(), false));
         this.Time = 0 ;
         this.completed = 0 ;
+        this.contextSwiching = 0 ;
         this.totalTurnaroundTime = 0; 
         this.totalWaitingTime = 0;
     }
-    
-    public void addProcess(String name ,int arrivalTime, int burstTime,int priority){
-        Process process = new Process(name,arrivalTime,burstTime,priority);
-        this.processes.add(process);
-        this.isCompleted.add(false);
+
+    public void setContextSwiching(int contextSwiching) {
+        this.contextSwiching = contextSwiching;
     }
     
-    
     public void run(){
-        
-        int workingProcessIndex = -1 , shortestBurstTime = processes.get(0).getBurstTime() ;
-        
-        for(int i = 0 ; i < processes.size() ;i++){
-            if(shortestBurstTime > processes.get(i).getBurstTime()){
-                shortestBurstTime = processes.get(i).getBurstTime();
-            }
-        }
-        
-        mainWhile:
+        int workingProcessIndex = -1 ;
+       
         while (completed != processes.size()) { 
-            
-            if(Time % shortestBurstTime == 0 && Time != 0){
-                for(int i = 0 ; i < shortestBurstTime && completed != processes.size();i++){
-                    int longest = -1 ; 
-                    for (int j = 0 ; j <processes.size();j++) { 
-                        if (!isCompleted.get(j) && processes.get(j).getArrivalTime() <= Time) { 
-                            if (longest == -1 || processes.get(j).getRemainingTime() > processes.get(longest).getRemainingTime()) { 
-                                longest = j ; 
-                            } 
-                        } 
-                    } 
-
-                    if (longest == -1) { 
-                        Time++; 
-                        continue; 
-                    } 
-
-                    if(workingProcessIndex != longest){
-                        workingProcessIndex = longest ;
-                        System.out.println("Time: "+Time+ " Process: "+processes.get(workingProcessIndex).getName()+" is Working");
-                    }
-
-                    processes.get(longest).decreaseRemainingTime();
-                    if (processes.get(longest).getRemainingTime() == 0) { 
-                        processes.get(longest).setCompletionTime( Time + 1); 
-                        processes.get(longest).setTurnAroundTime( processes.get(longest).getCompletionTime() - processes.get(longest).getArrivalTime()); 
-                        processes.get(longest).setWaitingTime( processes.get(longest).getTurnAroundTime() - processes.get(longest).getBurstTime()); 
-                        isCompleted.set(longest, true); 
-                        completed++; 
-                    } 
-                    Time++ ;
-
-                }
-                
-                if(completed == processes.size()){
-                    System.out.println("Time: "+Time+" Finished");
-                    break mainWhile ;
-                }
-                
-            }
-            
             int shortest= -1 ; 
             for (int i=0; i<processes.size();i++) { 
                 if (!isCompleted.get(i) && processes.get(i).getArrivalTime() <= Time) { 
@@ -109,27 +60,28 @@ public class SRTF_Schedule {
             if (shortest == -1) { 
                 Time++; 
                 continue; 
-            } 
+            }
             
             if(workingProcessIndex != shortest){
                 workingProcessIndex = shortest ;
                 System.out.println("Time: "+Time+ " Process: "+processes.get(workingProcessIndex).getName()+" is Working");
             }
+           
+            processes.get(shortest).setRemainingTime(0); 
+            Time += processes.get(shortest).getBurstTime() ;
        
-            processes.get(shortest).decreaseRemainingTime(); 
-  
             if (processes.get(shortest).getRemainingTime() == 0) { 
-                processes.get(shortest).setCompletionTime( Time + 1); 
+                processes.get(shortest).setCompletionTime( Time ); 
                 processes.get(shortest).setTurnAroundTime( processes.get(shortest).getCompletionTime() - processes.get(shortest).getArrivalTime()); 
                 processes.get(shortest).setWaitingTime( processes.get(shortest).getTurnAroundTime() - processes.get(shortest).getBurstTime()); 
                 isCompleted.set(shortest, true); 
                 completed++; 
             } 
-  
-            Time++; 
+
+            Time+= contextSwiching ;
             
             if(completed == processes.size()){
-                System.out.println("Time: "+Time+" Finished");
+                System.out.println("Time: "+(Time-contextSwiching)+" Finished");
             }
         } 
         
@@ -144,4 +96,5 @@ public class SRTF_Schedule {
         System.out.println("Average Waiting Time: " + (totalWaitingTime / processes.size())); 
     
     }
+    
 }
