@@ -17,18 +17,11 @@ public class CPUScheduling {
     private static Vector<Process> processes2 = new Vector<Process>() ;
     private static Vector<Process> processes3 = new Vector<Process>() ;
 
-    private static ArrayList<AGprocess> AGprocesses = new ArrayList<AGprocess>() ;
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String[] args) {
 
-       
         Scanner input = new Scanner(System.in); 
         System.out.print("Enter the Number of Processes: "); 
         int n = input.nextInt(); 
-        System.out.print("Enter the Quantum Time: "); 
-        int quantum = input.nextInt(); 
         System.out.print("Enter the Context Switching: "); 
         int context = input.nextInt(); 
         input.nextLine();
@@ -50,17 +43,7 @@ public class CPUScheduling {
             processes1.add(process1);
             processes2.add(process2);
             processes3.add(process3);
-            AGprocess agprocess = new AGprocess(name,arrivalTime,burstTime,priority,quantum);
-            AGprocesses.add(agprocess);
         }
-        
-        
-//        AGprocess p1 = new AGprocess("p1",0,17,4,4) , p2 = new AGprocess("p2",3,6,9,4), p3 = new AGprocess("p3",4,10,3,4),p4 = new AGprocess("p4",29,4,8,4);
-//        
-//        AGprocesses.add(p1);
-//        AGprocesses.add(p2);
-//        AGprocesses.add(p3);
-//        AGprocesses.add(p4);
 
         System.out.print("1.SJF\n2.SRTF\n3.Priority\n4.AG\n5.all\nEnter your choice: ");
         int answer = input.nextInt() ;
@@ -83,12 +66,5 @@ public class CPUScheduling {
             Priority_Schedule prioritySchedule = new Priority_Schedule(processes3) ;
             prioritySchedule.run();
         }
-        
-        if(answer == 4 || answer == 5){
-            System.out.println("\n              AG Schedule");
-            AG_Schedule agschedule = new AG_Schedule(AGprocesses) ;
-            agschedule.run();
-        }
-
     }
 }
